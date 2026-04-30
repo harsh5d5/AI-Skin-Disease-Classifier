@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuralTrust - AI Skin Disease Diagnosis</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Inter',sans-serif;background:#0a0a0f;color:#e0e0e0;min-height:100vh}
+        .gradient-bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;background:radial-gradient(ellipse at 20% 50%,rgba(56,189,248,0.08),transparent 50%),radial-gradient(ellipse at 80% 20%,rgba(168,85,247,0.08),transparent 50%),radial-gradient(ellipse at 50% 80%,rgba(52,211,153,0.06),transparent 50%)}
+        .container{max-width:1100px;margin:0 auto;padding:20px}
+        header{text-align:center;padding:30px 0 20px}
+        header h1{font-size:2.2rem;font-weight:800;background:linear-gradient(135deg,#38bdf8,#a855f7,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        header p{color:#888;margin-top:6px;font-size:0.95rem}
+        .agents-bar{display:flex;gap:8px;justify-content:center;margin:16px 0 24px;flex-wrap:wrap}
+        .agent-chip{padding:6px 14px;border-radius:20px;font-size:0.75rem;font-weight:600;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04)}
+        .agent-chip.a1{border-color:rgba(56,189,248,0.3);color:#38bdf8}
+        .agent-chip.a2{border-color:rgba(168,85,247,0.3);color:#a855f7}
+        .agent-chip.a3{border-color:rgba(251,191,36,0.3);color:#fbbf24}
+        .agent-chip.a4{border-color:rgba(52,211,153,0.3);color:#34d399}
+        .agent-chip.a5{border-color:rgba(251,113,133,0.3);color:#fb7185}
+        .upload-zone{border:2px dashed rgba(168,85,247,0.3);border-radius:16px;padding:50px 20px;text-align:center;cursor:pointer;transition:all 0.3s;background:rgba(255,255,255,0.02);margin-bottom:24px}
+        .upload-zone:hover,.upload-zone.dragover{border-color:#a855f7;background:rgba(168,85,247,0.06)}
+        .upload-zone svg{width:48px;height:48px;margin-bottom:12px;color:#a855f7}
+        .upload-zone h3{font-size:1.1rem;margin-bottom:6px}
+        .upload-zone p{color:#666;font-size:0.85rem}
+        #fileInput{display:none}
+        .preview-img{max-width:260px;max-height:260px;border-radius:12px;margin:12px auto;display:none;border:2px solid rgba(168,85,247,0.3)}
+        .btn{padding:12px 32px;border:none;border-radius:10px;font-weight:700;font-size:0.95rem;cursor:pointer;transition:all 0.3s;display:none;margin:12px auto}
+        .btn-primary{background:linear-gradient(135deg,#a855f7,#6366f1);color:#fff}
+        .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(168,85,247,0.3)}
+        .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+        #loading{display:none;text-align:center;padding:30px}
+        .spinner{width:40px;height:40px;border:3px solid rgba(168,85,247,0.2);border-top-color:#a855f7;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        #results{display:none}
+        .result-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:20px;margin-bottom:16px}
+        .result-card h3{font-size:1rem;margin-bottom:12px;color:#a855f7}
+        .pipeline-step{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;margin-bottom:8px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05)}
+        .step-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.85rem;flex-shrink:0}
+        .step-icon.s1{background:rgba(56,189,248,0.15);color:#38bdf8}
+        .step-icon.s2{background:rgba(168,85,247,0.15);color:#a855f7}
+        .step-icon.s3{background:rgba(251,191,36,0.15);color:#fbbf24}
+        .step-icon.s4{background:rgba(52,211,153,0.15);color:#34d399}
+        .step-icon.s5{background:rgba(251,113,133,0.15);color:#fb7185}
+        .step-info{flex:1}
+        .step-info .name{font-weight:600;font-size:0.85rem}
+        .step-info .detail{color:#888;font-size:0.78rem;margin-top:2px}
+        .step-time{font-size:0.75rem;color:#666;font-weight:500}
+        .disease-item{padding:16px;border-radius:12px;margin-bottom:10px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);transition:all 0.3s}
+        .disease-item:first-child{border-color:rgba(168,85,247,0.3);background:rgba(168,85,247,0.06)}
+        .disease-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+        .disease-name{font-weight:700;font-size:1.05rem}
+        .disease-prob{font-weight:700;font-size:1.05rem;color:#a855f7}
+        .prob-bar{height:6px;background:rgba(255,255,255,0.06);border-radius:3px;margin-bottom:10px;overflow:hidden}
+        .prob-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#a855f7,#6366f1);transition:width 1s ease}
+        .severity-badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:0.7rem;font-weight:700;text-transform:uppercase;margin-right:8px}
+        .sev-low{background:rgba(52,211,153,0.15);color:#34d399}
+        .sev-medium{background:rgba(251,191,36,0.15);color:#fbbf24}
+        .sev-high{background:rgba(251,113,133,0.15);color:#fb7185}
+        .sev-critical{background:rgba(239,68,68,0.2);color:#ef4444;animation:pulse 2s infinite}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
+        .disease-desc{color:#aaa;font-size:0.82rem;line-height:1.5;margin:8px 0}
+        .what-to-do{background:rgba(56,189,248,0.06);border:1px solid rgba(56,189,248,0.15);border-radius:8px;padding:10px 14px;margin-top:8px;font-size:0.8rem;color:#7dd3fc}
+        .what-to-do strong{color:#38bdf8}
+        .meta-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+        .meta-tag{font-size:0.72rem;padding:2px 8px;border-radius:6px;background:rgba(255,255,255,0.05);color:#999}
+        .quality-meter{display:flex;align-items:center;gap:10px;margin:10px 0}
+        .quality-bar{flex:1;height:8px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden}
+        .quality-fill{height:100%;border-radius:4px;transition:width 1s ease}
+        .rejected-box{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:14px;padding:24px;text-align:center}
+        .rejected-box h3{color:#ef4444;margin-bottom:8px}
+        .total-time{text-align:center;color:#666;font-size:0.82rem;margin-top:16px}
+        .reset-btn{display:block;margin:20px auto;padding:10px 28px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#aaa;border-radius:10px;cursor:pointer;font-weight:600;font-size:0.85rem}
+        .reset-btn:hover{background:rgba(255,255,255,0.1)}
+    </style>
+</head>
+<body>
+<div class="gradient-bg"></div>
+<div class="container">
+    <header>
+        <h1>🧠 NeuralTrust Diagnostic</h1>
+        <p>Multi-Agent AI System for Skin Disease Analysis</p>
+    </header>
+    <div class="agents-bar">
+        <span class="agent-chip a1">🛡️ Gatekeeper</span>
+        <span class="agent-chip a2">🔀 Router</span>
+        <span class="agent-chip a3">👤 Face</span>
+        <span class="agent-chip a4">🫁 Torso</span>
+        <span class="agent-chip a5">🦵 Limbs</span>
+    </div>
+
+    <div id="uploadSection">
+        <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 16V4m0 0L8 8m4-4l4 4M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
+            <h3>Upload Skin Image</h3>
+            <p>Drag & drop or click to browse · JPG, PNG, BMP</p>
+        </div>
+        <input type="file" id="fileInput" accept="image/*">
+        <img id="preview" class="preview-img">
+        <button class="btn btn-primary" id="diagnoseBtn" onclick="runDiagnosis()">🔬 Run Diagnosis</button>
+    </div>
+
+    <div id="loading">
+        <div class="spinner"></div>
+        <p style="color:#a855f7;font-weight:600">Running 5-Agent Pipeline...</p>
+        <p style="color:#666;font-size:0.82rem;margin-top:6px">Gatekeeper → Router → Specialist</p>
+    </div>
+
+    <div id="results"></div>
+</div>
+
+<script>
+const dropZone=document.getElementById('dropZone'),fileInput=document.getElementById('fileInput'),preview=document.getElementById('preview'),diagnoseBtn=document.getElementById('diagnoseBtn');
+let selectedFile=null;
+
+['dragenter','dragover'].forEach(e=>dropZone.addEventListener(e,ev=>{ev.preventDefault();dropZone.classList.add('dragover')}));
+['dragleave','drop'].forEach(e=>dropZone.addEventListener(e,ev=>{ev.preventDefault();dropZone.classList.remove('dragover')}));
+dropZone.addEventListener('drop',e=>{if(e.dataTransfer.files.length)handleFile(e.dataTransfer.files[0])});
+fileInput.addEventListener('change',e=>{if(e.target.files.length)handleFile(e.target.files[0])});
+
+function handleFile(file){
+    selectedFile=file;
+    const reader=new FileReader();
+    reader.onload=e=>{preview.src=e.target.result;preview.style.display='block'};
+    reader.readAsDataURL(file);
+    diagnoseBtn.style.display='block';
+    document.getElementById('results').style.display='none';
+}
+
+async function runDiagnosis(){
+    if(!selectedFile)return;
+    diagnoseBtn.disabled=true;
+    document.getElementById('loading').style.display='block';
+    document.getElementById('results').style.display='none';
+
+    const fd=new FormData();
+    fd.append('image',selectedFile);
+    try{
+        const res=await fetch('/diagnose',{method:'POST',body:fd});
+        const data=await res.json();
+        showResults(data);
+    }catch(err){
+        document.getElementById('results').innerHTML=`<div class="rejected-box"><h3>Error</h3><p>${err.message}</p></div>`;
+        document.getElementById('results').style.display='block';
+    }
+    document.getElementById('loading').style.display='none';
+    diagnoseBtn.disabled=false;
+}
+
+function sevClass(s){return({'Low':'sev-low','Medium':'sev-medium','High':'sev-high','Critical':'sev-critical'})[s]||'sev-medium'}
+function qualityColor(q){return q>=80?'#34d399':q>=50?'#fbbf24':'#ef4444'}
+
+function showResults(data){
+    const r=document.getElementById('results');
+    let html='';
+
+    // Pipeline trace
+    html+=`<div class="result-card"><h3>⚡ Agent Pipeline</h3>`;
+    if(data.pipeline){
+        data.pipeline.forEach((step,i)=>{
+            const cls='s'+(i+1);
+            let detail=step.status||step.body_part||step.top_disease||'';
+            if(step.quality_score)detail+=` · Quality: ${step.quality_score}/100`;
+            if(step.reasoning)detail=step.reasoning;
+            if(step.top_probability)detail=`${step.top_disease} (${step.top_probability}%)`;
+            html+=`<div class="pipeline-step"><div class="step-icon ${cls}">${i+1}</div><div class="step-info"><div class="name">${step.agent}</div><div class="detail">${detail}</div></div><span class="step-time">${step.time}</span></div>`;
+        });
+    }
+    html+=`</div>`;
+
+    if(data.status==='rejected'){
+        html+=`<div class="rejected-box"><h3>❌ Image Rejected</h3><p style="color:#fca5a5">${data.rejection_reason}</p><p style="margin-top:8px;color:#888">Quality Score: ${data.quality_score}/100</p></div>`;
+    }else if(data.status==='success'){
+        // Quality score bar
+        const qc=qualityColor(data.quality_score);
+        html+=`<div class="result-card"><h3>📊 Image Quality</h3><div class="quality-meter"><span style="font-weight:700;color:${qc}">${data.quality_score}/100</span><div class="quality-bar"><div class="quality-fill" style="width:${data.quality_score}%;background:${qc}"></div></div><span style="font-size:0.8rem;color:#888">Body: ${data.body_part}</span></div></div>`;
+
+        // Predictions
+        html+=`<div class="result-card"><h3>🔬 Diagnosis Results — ${data.specialist}</h3>`;
+        if(data.predictions){
+            data.predictions.forEach((p,i)=>{
+                html+=`<div class="disease-item"><div class="disease-header"><span class="disease-name">${i===0?'🏆 ':''} ${p.disease}</span><span class="disease-prob">${p.probability}%</span></div>`;
+                html+=`<div class="prob-bar"><div class="prob-fill" style="width:${Math.min(p.probability,100)}%"></div></div>`;
+                html+=`<div><span class="severity-badge ${sevClass(p.severity)}">${p.severity}</span>`;
+                if(p.body_focus)html+=`<span class="meta-tag">📍 ${p.body_focus}</span>`;
+                if(p.also_known_as)html+=`<span class="meta-tag">${p.also_known_as}</span>`;
+                html+=`</div>`;
+                if(p.description)html+=`<p class="disease-desc">${p.description}</p>`;
+                if(p.what_to_do)html+=`<div class="what-to-do"><strong>💊 What to do:</strong> ${p.what_to_do}</div>`;
+                html+=`</div>`;
+            });
+        }
+        html+=`</div>`;
+    }
+
+    if(data.total_time)html+=`<p class="total-time">Total processing time: ${data.total_time}</p>`;
+    html+=`<button class="reset-btn" onclick="resetAll()">🔄 Test Another Image</button>`;
+    r.innerHTML=html;
+    r.style.display='block';
+    r.scrollIntoView({behavior:'smooth'});
+}
+
+function resetAll(){
+    selectedFile=null;preview.style.display='none';diagnoseBtn.style.display='none';
+    document.getElementById('results').style.display='none';fileInput.value='';
+}
+</script>
+</body>
+</html>
