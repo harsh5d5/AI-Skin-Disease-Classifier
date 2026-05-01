@@ -162,12 +162,9 @@ cython_debug/
 .idea/
 
 # Custom Ignore
-models/
 uploads/
-*.pth
-*.h5
-*.keras
 *.zip
 *.tar.gz
 Datasets_acen/
 data/
+
