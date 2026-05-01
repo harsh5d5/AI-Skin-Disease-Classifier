@@ -23,12 +23,12 @@ An intelligent, multi-agent artificial intelligence system designed to accuratel
 
 ## ✨ Features
 
-- 🌌 **Aesthetic Web Interface:** A gorgeous, dark-themed modern UI featuring dynamic animations and clear, step-by-step pipeline visualization.
-- 🧬 **Multi-Agent Pipeline:** Utilizes 5 specialized AI agents working in harmony to provide precise diagnostics.
-- ⚡ **CPU-Optimized:** Designed to run efficiently on consumer hardware without the need for dedicated GPUs.
-- 🔀 **Intelligent Routing:** Automatically detects the body part (Face, Torso, Limbs) and routes the image to the correct specialist model.
-- 🛡️ **Quality Control:** Built-in vision gatekeeper ensures only high-quality, blur-free, and watermark-free images are processed.
-- 💊 **Actionable Guidance:** Breaks down complex medical terms into simple descriptions and provides a clear "What to do" action plan for the user.
+- 🌌 ** Web Interface:** A gorgeous, dark-themed modern UI featuring dynamic animations and clear, step-by-step pipeline visualization.
+-  **Multi-Agent Pipeline:** Utilizes 5 specialized AI agents working in harmony to provide precise diagnostics.
+-  **CPU-Optimized:** Designed to run efficiently on consumer hardware without the need for dedicated GPUs.
+-  **Intelligent Routing:** Automatically detects the body part (Face, Torso, Limbs) and routes the image to the correct specialist model.
+-  **Quality Control:** Built-in vision gatekeeper ensures only high-quality, blur-free, and watermark-free images are processed.
+-  **Actionable Guidance:** Breaks down complex medical terms into simple descriptions and provides a clear "What to do" action plan for the user.
 
 <br>
 
