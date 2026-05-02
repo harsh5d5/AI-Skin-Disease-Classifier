@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🧠 NeuralTrust
+# 🧠 NeuralTrust 
 
 <!-- Animated Typing Title -->
 <a href="https://git.io/typing-svg"><img src="https://readme-typing-svg.herokuapp.com?font=Inter&weight=800&size=40&pause=1000&color=A855F7&center=true&vCenter=true&width=800&lines=NeuralTrust+Diagnostic+System;Multi-Agent+AI+Architecture;Skin+Disease+Classification;Powered+by+Deep+Learning" alt="Typing SVG" /></a>
